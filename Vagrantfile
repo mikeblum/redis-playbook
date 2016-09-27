@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
     # enable access from the host machine - DEVELOPMENT ONLY
     # on a web server this would expose redis to the world
     ansible.extra_vars = {
-      bind_addr: "0.0.0.0"
+      redis_bind_addr: "0.0.0.0"
     }
   end
 end

@@ -7,16 +7,16 @@
 
   vars:
     ipv4_addr: '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
-    user: redis
-    group: redis
+    redis_user: redis
+    redis_group: redis
     # change for production
-    bind_addr: 127.0.0.1
-    port: 6379
-    tcp_sockets: 511
-    logfile: /var/log/redis/redis-server.log
+    redis_bind_addr: 127.0.0.1
+    redis_port: 6379
+    redis_tcp_sockets: 511
+    redis_logfile: /var/log/redis/redis-server.log
     # generate a 32-character password with apg:
     # apg -m 32 -x 1 -a 1 -n 1
-    password: redis
+    redis_password: redis
 
   tasks:
     - name: update apt cache
@@ -78,19 +78,19 @@
     - name: secure redis
       lineinfile: dest=/etc/redis/redis.conf
                 regexp='^# requirepass \w*$'
-                line='requirepass {{ password }}'
+                line='requirepass {{ redis_password }}'
                 state=present
 
     - name: bind to redis.bind_addr
       lineinfile: dest=/etc/redis/redis.conf
                 regexp='^bind {{ ipv4_addr }}$'
-                line='bind {{ bind_addr }}'
+                line='bind {{ redis_bind_addr }}'
                 state=present
 
     - name: configure logging
       lineinfile: dest=/etc/redis/redis.conf
                 regexp='^logfile ""$'
-                line='logfile {{ logfile }}'
+                line='logfile {{ redis_logfile }}'
                 state=present
 
     - name: disable Transparent Huge Pages (THP) support
@@ -103,11 +103,11 @@
     - name: fix TCP backlog
       lineinfile: dest=/etc/rc.local
                 insertbefore='^exit 0$'
-                line='net.core.somaxconn={{ tcp_sockets }}'
+                line='net.core.somaxconn={{ redis_tcp_sockets }}'
                 state=present
       become: yes
 
-    - command: sysctl -w net.core.somaxconn={{ tcp_sockets }}
+    - command: sysctl -w net.core.somaxconn={{ redis_tcp_sockets }}
       become: yes
 
     - name: enable low-memory background saves
