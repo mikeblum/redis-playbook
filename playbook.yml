@@ -131,8 +131,8 @@
       group: name=redis state=present
 
     - name: create redis user
-      user: name=redis
-            group=redis
+      user: name={{ redis_user }}
+            group={{ redis_group }}
             shell=/bin/bash
             createhome=no
 

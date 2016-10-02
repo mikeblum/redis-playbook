@@ -3,8 +3,8 @@ Description=Redis In-Memory Data Store
 After=network.target
 
 [Service]
-User={{ user }}
-Group={{ group }}
+User={{ redis_user }}
+Group={{ redis_group }}
 ExecStart=/usr/local/bin/redis-server /etc/redis/redis.conf
 ExecStop=/usr/local/bin/redis-cli shutdown
 Restart=always
