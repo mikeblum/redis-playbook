@@ -1,6 +1,7 @@
 ## redis-playbook
 
 <img src="https://github.com/mikeblum/redis-playbook/raw/master/images/ansible.png" style="max-width: 150px"/>
+---
 <img src="https://github.com/mikeblum/redis-playbook/raw/master/images/redis.png"   style="max-width: 150px"/>
 
 an Ansible playbook for deploying a secured and optimized Redis instance
