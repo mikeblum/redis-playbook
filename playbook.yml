@@ -1,7 +1,7 @@
 ---
 # based on Digital Ocean's installation guide
 # https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-redis-on-ubuntu-16-04
-- hosts: all
+- hosts: webservers 
   sudo: True
   remote_user: root
 
@@ -17,6 +17,14 @@
     # generate a 32-character password with apg:
     # apg -m 32 -x 1 -a 1 -n 1
     redis_password: redis
+  
+  # install python 2.7 on Ubuntu > 14.x 
+  # solves "/bin/sh: 1: /usr/bin/python: not found" issue with
+  # later Ubuntu releases
+  gather_facts: no
+  pre_tasks:
+    - name: 'install python2'
+      raw: sudo apt-get -y install python-simplejson  
 
   tasks:
     - name: update apt cache
