@@ -22,6 +22,6 @@ This playbook looks to automate the tedious setup process by performing the foll
 - Optimize Redis
 	- Disable Transparent Huge Pages (THP) support 
 	- Increase TCP backlog
-	- Enalbe low-memory DB saves
+	- Enable low-memory DB saves
 
 Run `vagrant up` to provision a Redis instance available from your local machine.
