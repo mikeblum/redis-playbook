@@ -18,6 +18,7 @@ This playbook looks to automate the tedious setup process by performing the foll
 - Configure and secure Redis-as-a-service
 	- Create a `redis` user and group
 	- Create data and logging directories
+	- Enable Redis socket support (redis-cli -a redis -s /var/run/redis/redis.sock)
 
 - Optimize Redis
 	- Disable Transparent Huge Pages (THP) support 
