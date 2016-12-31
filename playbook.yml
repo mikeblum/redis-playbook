@@ -56,7 +56,7 @@
       make: chdir=/tmp/redis-stable target={{ item }}
       become: yes
       with_items:
-        # - test
+        - test
         - install
 
     - name: create /etc/redis, data, logs, and socket directories
