@@ -14,7 +14,7 @@
     redis_port: 6379
     redis_tcp_sockets: 511
     redis_socket: /var/run/redis/redis.sock
-    redis_socket_permissions: 755
+    redis_socket_permissions: 770
     redis_logfile: /var/log/redis/redis-server.log
     # generate a 32-character password with apg:
     # apg -m 32 -x 1 -a 1 -n 1
