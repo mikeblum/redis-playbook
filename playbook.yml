@@ -1,7 +1,7 @@
 ---
 # based on Digital Ocean's installation guide
 # https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-redis-on-ubuntu-16-04
-- hosts: webservers 
+- hosts: all 
   sudo: True
   remote_user: root
 
@@ -13,6 +13,8 @@
     redis_bind_addr: 127.0.0.1
     redis_port: 6379
     redis_tcp_sockets: 511
+    redis_socket: /var/run/redis/redis.sock
+    redis_socket_permissions: 755
     redis_logfile: /var/log/redis/redis-server.log
     # generate a 32-character password with apg:
     # apg -m 32 -x 1 -a 1 -n 1
@@ -54,15 +56,16 @@
       make: chdir=/tmp/redis-stable target={{ item }}
       become: yes
       with_items:
-        - test
+        # - test
         - install
 
-    - name: create /etc/redis and data, logs directories
+    - name: create /etc/redis, data, logs, and socket directories
       file: path={{ item }} state=directory
       with_items:
         - /etc/redis
         - /var/lib/redis
         - /var/log/redis
+        - /var/run/redis
 
     - name: copy default redis.conf
       # create a copy of the default redis.conf
@@ -143,13 +146,30 @@
             group={{ redis_group }}
             shell=/bin/bash
             createhome=no
+    
+    - name: enable unix socket support
+      lineinfile: dest=/etc/redis/redis.conf
+                regexp='^unixsocket {{ redis_socket }}$'
+                line='unixsocket {{ redis_socket }}'
+                state=present
+                insertafter=EOF
+                create=True
+
+    - name: configure unix socket permissions
+      lineinfile: dest=/etc/redis/redis.conf
+                regexp='^unixsocketperm {{ redis_socket_permissions }}$'
+                line='unixsocketperm {{ redis_socket_permissions }}'
+                state=present
+                insertafter=EOF
+                create=True
 
     - name: set permissions for redis
-      file: path=/var/lib/redis state=touch owner=redis group=redis mode=0770
-      become: yes
-
-    - name: set permissions for logging
-      file: path=/var/log/redis state=touch owner=redis group=redis mode=0770
+      file: path={{ item }} state=touch owner=redis group=redis mode=0770
+      with_items:
+        - /etc/redis
+        - /var/lib/redis
+        - /var/log/redis
+        - /var/run/redis
       become: yes
 
     - name: start redis
