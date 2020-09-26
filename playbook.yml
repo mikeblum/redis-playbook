@@ -87,28 +87,43 @@
                 state=present
 
     - name: secure redis
-      lineinfile: dest=/etc/redis/redis.conf
-                regexp='^# requirepass \w*$'
-                line='requirepass {{ redis_password }}'
-                state=present
+      lineinfile: 
+        dest: /etc/redis/redis.conf
+        regexp: '^# requirepass \w*$'
+        line: 'requirepass {{ redis_password }}'
+        state: present
 
     - name: bind to redis.bind_addr
-      lineinfile: dest=/etc/redis/redis.conf
-                regexp='^bind {{ ipv4_addr }}$'
-                line='bind {{ redis_bind_addr }}'
-                state=present
+      lineinfile: 
+        dest: /etc/redis/redis.conf
+        regexp: '^bind {{ ipv4_addr }}$'
+        line: 'bind {{ redis_bind_addr }}'
+        state: present
 
     - name: configure logging
-      lineinfile: dest=/etc/redis/redis.conf
-                regexp='^logfile ""$'
-                line='logfile {{ redis_logfile }}'
-                state=present
+      lineinfile: 
+        dest: /etc/redis/redis.conf
+        regexp: '^logfile ""$'
+        line: 'logfile {{ redis_logfile }}'
+        state: present
+
+    - name: Check rc.local exists
+      stat:
+        path: /etc/rc.local
+      register: rc_local
+
+    - name: Create rc.local if not present
+      when: rc_local.islnk is not defined
+      template:
+        src: templates/rc.local
+        dest: /etc/rc.local
+        mode: '0755'
 
     - name: disable Transparent Huge Pages (THP) support
       lineinfile: dest=/etc/rc.local
-                insertbefore='^exit 0$'
-                line='echo never > /sys/kernel/mm/transparent_hugepage/enabled'
-                state=present
+            	  insertbefore='^exit 0$'
+          	  line='echo never > /sys/kernel/mm/transparent_hugepage/enabled'
+          	  state=present
       become: yes
 
     - name: fix TCP backlog
